@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -27,13 +28,38 @@ type Response struct {
 	Data []Data `json:"data"`
 }
 
+const (
+	url = "https://jsonmock.hackerrank.com/api/article_users?page="
+	threshold = 10
+)
+
 func main() {
-	url := "https://jsonmock.hackerrank.com/api/article_users?page=1"
+	numPages := getPageCount()
+
+	for pageNum := 1; pageNum <= numPages; pageNum++ {
+		response := getPage(strconv.Itoa(pageNum))
+		data := response.Data
+		for i := 0; i < len(data); i++ {
+			user := data[i]
+			if user.SubmissionCount > threshold {
+				fmt.Println(user.Username)
+			}
+		}
+	}
+
+}
+
+func getPageCount() int {
+	response := getPage("1")
+	return response.TotalPages
+}
+
+func getPage(pageNum string) Response {
 	client := http.Client{
 		Timeout: time.Second * 4,
 	}
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := http.NewRequest(http.MethodGet, url + pageNum, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,5 +84,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(response.TotalPages)
+	return response
 }
