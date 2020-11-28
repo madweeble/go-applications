@@ -34,6 +34,18 @@ const (
 )
 
 func main() {
+	fmt.Println("Hello, world")
+
+	authorHandler := func(w http.ResponseWriter, req *http.Request) {
+		fmt.Println("Hello, handler")
+		doStuff()
+	}
+
+	http.HandleFunc("/authors", authorHandler)
+	log.Fatal(http.ListenAndServe(":8000", nil))
+}
+
+func doStuff() {
 	numPages := getPageCount()
 
 	for pageNum := 1; pageNum <= numPages; pageNum++ {
@@ -46,7 +58,6 @@ func main() {
 			}
 		}
 	}
-
 }
 
 func getPageCount() int {

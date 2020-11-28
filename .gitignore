@@ -16,6 +16,7 @@ vendor/
 
 # IDE and build directories
 .idea/
+.build/
 bin/
 out/
 
@@ -23,3 +24,5 @@ out/
 *.iws
 *.ipr
 *.iml
+
+.DS_Store
